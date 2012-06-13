@@ -40,7 +40,7 @@ app.error(function (err, req, res) {
         res.send('Server Side Error!');
     }
 });
-console.log('hah');
+
 routes(app);
 
 app.listen(config.port, function () {

@@ -12,11 +12,11 @@ exports.checkOpenId = function (openId, callback) {
 	});	
 }
 
-// callback(err: Error, isValid: bool)��ע��csv�ļ�Ҫ��utf-8���뱣��
+// callback(err: Error, isValid: bool)�
 exports.verifyIdentity = function (name, idNumber, callback) {
 	fs.readFile('./data/idinfo.csv', 'utf-8', function (err, data) {
 		if (err) return callback(err);
-		var matchArr = data.match(new RegExp(name + ',' + idNumber)); // �˴�δ����Ϊ��λƥ�䣬���ϸ�
+		var matchArr = data.match(new RegExp(name + ',' + idNumber));
 		var isValid = matchArr == null ? false : true;		
 		callback(null, isValid);
 	});
