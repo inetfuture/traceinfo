@@ -14,7 +14,8 @@ module.exports = function (app) {
                     req.session.openId = req.body.openId;
                     redirectUrl = '/';
                 } else {
-                    redirectUrl = 'sign/verify';
+                    console.log('1');
+                    redirectUrl = 'verify';
                     req.session.tempOpenId = req.body.openId;
                 }
                 res.send('window.location.href = "' + redirectUrl + '"');
@@ -31,16 +32,30 @@ module.exports = function (app) {
         }
     });
     app.post('/verify', function (req, res, next) {
-        dal.verifyIdentity(req.body.name, req.body.idNumber, function (err, isValid) {
+        if (!req.body.openId || !req.body.name || !req.body.idNumber) {
+            res.render('sign/verify', { title: '验证', openId: req.body.openId, name: req.body.name, idNumber: req.body.idNumber, errorMsg: '信息不完整！' });
+        }
+
+        dal.verifyIdentity(req.body.name, req.body.idNumber, function (err, code) {
             if (err) return next(err);
-            if (isValid) {
-                dal.createUser(req.body.openId, req.body.name, function (err) {
-                    if (err) return next(err);
-                    req.session.openId = req.body.openId;
-                    res.redirect("/");
-                });
-            } else {
-                res.render('sign/verify', { title: '验证', openId: req.body.openId, name: req.body.name, idNumber: req.body.idNumber, err: '未找到相符记录，验证失败！' });
+            var errorMsg;
+            switch (code) {
+                case 0:
+                    dal.createUser(req.body.openId, req.body.name, function (err) {
+                        if (err) return next(err);
+                        req.session.openId = req.body.openId;
+                        res.redirect("/");
+                    });
+                    break;
+                case 1:
+                    errorMsg = '姓名或身份证号无效！';
+                    break;
+                case 2:
+                    errorMsg = '该身份已被使用！';
+                    break;
+            }
+            if (errorMsg) {
+                res.render('sign/verify', { title: '验证', openId: req.body.openId, name: req.body.name, idNumber: req.body.idNumber, errorMsg: errorMsg });
             }
         });
     });

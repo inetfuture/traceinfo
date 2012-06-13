@@ -12,13 +12,26 @@ exports.checkOpenId = function (openId, callback) {
     });
 }
 
-// callback(err: Error, isValid: bool)�
+// callback(err: Error, code: int)�
 exports.verifyIdentity = function (name, idNumber, callback) {
-    fs.readFile('./data/idinfo.csv', 'utf-8', function (err, data) {
+    fs.readFile(__dirname + '/data/idinfo.csv', 'utf-8', function (err, data) {
         if (err) return callback(err);
         var matchArr = data.match(new RegExp(name + ',' + idNumber));
-        var isValid = matchArr == null ? false : true;
-        callback(null, isValid);
+        if (matchArr) {
+            pg.connect(config.conString, function (err, client) {
+                if (err) return callback(err);
+                client.query('select count(1) from users where idNumber = $1', [idNumber], function (err, result) {
+                    if (err) return callback(err);
+                    var code = 0;
+                    if (result.rows[0].count != 0) {
+                        code = 2;
+                    }
+                    callback(err, code);
+                });
+            });
+        } else {
+            callback(err, 1);
+        }
     });
 }
 
