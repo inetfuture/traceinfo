@@ -1,0 +1,25 @@
+
+if !qqCallback
+	- headContents.push('<script data-appid="' + config.qqLoginAppId + '" data-redirecturi="' + config.qqLoginRedirectUri + '" type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8"></script>')
+	div(style="text-align: center;")
+		span#qqLoginBtn
+	script(type="text/javascript")
+		QC.Login.signOut();
+
+		QC.Login({
+			btnId: 'qqLoginBtn',
+			size: 'A_XL'
+		}, function (reqData, opts) {
+			$('#qqLoginBtn').parent('div').html('正在跳转，请稍后。。。');
+			QC.Login.getMe(function (openId, accessToken) {
+				$.ajax({
+					type: 'POST',
+					url: '',
+					data: { openId: openId },
+					dataType: 'script'
+				});
+			})
+		});
+else
+	- headContents.push('<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>')
+	p 登录成功！

@@ -1,0 +1,72 @@
+﻿
+style(type="text/css")
+	.commonFormDiv {
+		width: 330px;
+		margin: 0 auto;
+	}
+	.err {
+		color: red;
+		text-align: center;
+	}
+.commonFormDiv
+	form(method="post")
+		fieldset
+			input(type="hidden", name="openId", value=locals.openId)
+			.field
+				label(for="name") 姓名
+				input(type="text", name="name", id="name", value=locals.name)
+			.field
+				label(for="idNumber") 身份证号
+				input(type="text", name="idNumber", id="idNumber", value=locals.idNumber)
+			.button
+				input(type="submit", value="验证")			
+script(type="text/javascript")
+	// jquery.validate结合jquery.qtip做表单验证
+	$('.commonFormDiv form').validate({
+		rules: {
+			name: {required: true },
+			idNumber: { required: true }
+		},
+		messages: {
+			name: { required:'请输入你的姓名' },
+			idNumber: { required: '请输入你的身份证号' }
+		},
+		
+		errorPlacement: function (error, element) {	
+			var hasTip = false;
+			// qtip似乎没有提供检测元素上是否已设置tip的api，只能try...cathch了
+			try {
+				element.qtip('enable');
+				hasTip = true;
+			} catch (exception) {}
+			if (!hasTip) {
+				element.qtip({
+					content: error.text(),
+					show: { delay: 0, when: { event: 'focus' } },
+					hide: { delay: 0, when: { event: 'blur' } },
+					position: {
+						corner: { target: 'rightMiddle', tooltip: 'leftMiddle' }
+					},
+					style: { 
+						name: 'red',
+						border: { radius: 4 },
+						tip: { corner: 'leftMiddle' }
+					}
+				}).qtip('show');					
+			} else {
+				element.qtip('api').updateContent(error.text(), false);
+				element.qtip('show');
+			}										
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).removeClass(errorClass).addClass(validClass);
+			try {
+				$(element).qtip('hide').qtip('disable');				
+			} catch (exception) {}
+		}
+	});
+if locals.err
+	script(type="text/javascript")
+		$(function () {
+			alert('#{locals.err}');
+		});

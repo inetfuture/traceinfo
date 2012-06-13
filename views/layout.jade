@@ -1,0 +1,19 @@
+﻿
+doctype 5
+html
+	head
+		- var titleSuffix = '08软工2班同学录'
+		title= title + ' - ' + titleSuffix || titleSuffix
+		meta(charset="utf-8")
+		link(rel="stylesheet", type="text/css", href="/stylesheets/main.css")
+		script(type="text/javascript", src="/javascripts/libraries/jquery-1.7.2.min.js")
+		script(type="text/javascript", src="/javascripts/libraries/jquery.validate.min.js")
+		script(type="text/javascript", src="/javascripts/libraries/jquery.qtip-1.0.0-rc3.min.js")
+		script(type="text/javascript", src="/javascripts/main.js")
+		- each content in headContents			
+			!= content
+	body
+		#wraper
+			#header
+			#container!= body
+			#footer VolcanoSoft (C) 2012
