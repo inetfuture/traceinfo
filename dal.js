@@ -3,11 +3,11 @@ var pg = require('pg');
 var fs = require('fs');
 
 // callback(err: Error, isVerified: bool)
-exports.checkOpenId = function (openId, callback) {	
+exports.checkOpenId = function (openId, callback) {
 	pg.connect(config.conString, function (err, client) {
 		if (err) return callback(err);	
-		client.query('select count(1) from users where openId = $1', [openId], function (err, result) {					
-			callback(err, err || result.rows[0].count != 0);			
+		client.query('select count(1) from users where openId = $1', [openId], function (err, result) {
+			callback(err, err || result.rows[0].count != 0);
 		});
 	});	
 }

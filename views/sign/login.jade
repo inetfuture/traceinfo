@@ -1,25 +1,35 @@
 
 if !qqCallback
-	- headContents.push('<script data-appid="' + config.qqLoginAppId + '" data-redirecturi="' + config.qqLoginRedirectUri + '" type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8"></script>')
-	div(style="text-align: center;")
-		span#qqLoginBtn
-	script(type="text/javascript")
-		QC.Login.signOut();
+    if settings.env == 'production'
+        - headContents.push('<script data-appid="' + config.qqLoginAppId + '" data-redirecturi="' + config.qqLoginRedirectUri + '" type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8"></script>')
+        div(style="text-align: center;")
+            span#qqLoginBtn
+        script(type="text/javascript")
+            QC.Login.signOut();
 
-		QC.Login({
-			btnId: 'qqLoginBtn',
-			size: 'A_XL'
-		}, function (reqData, opts) {
-			$('#qqLoginBtn').parent('div').html('正在跳转，请稍后。。。');
-			QC.Login.getMe(function (openId, accessToken) {
-				$.ajax({
-					type: 'POST',
-					url: '',
-					data: { openId: openId },
-					dataType: 'script'
-				});
-			})
-		});
+            QC.Login({
+                btnId: 'qqLoginBtn',
+                size: 'A_XL'
+            }, function (reqData, opts) {
+                $('#qqLoginBtn').parent('div').html('正在跳转，请稍后。。。');
+                QC.Login.getMe(function (openId, accessToken) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '',
+                        data: { openId: openId },
+                        dataType: 'script'
+                    });
+                })
+            });
+    else
+        script(type="text/javascript")
+            var openId = window.prompt("当前非production环境，请输入openId用于测试：", "6FA168C1B0BAEA84349D609FB98AE175");
+            $.ajax({
+                type: 'POST',
+                url: '',
+                data: { openId: openId },
+                dataType: 'script'
+            });
 else
-	- headContents.push('<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>')
-	p 登录成功！
+        - headContents.push('<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>')
+        p 登录成功！

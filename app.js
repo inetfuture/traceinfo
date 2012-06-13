@@ -1,6 +1,5 @@
 ﻿var express = require('express');
-var config = require('./config').config;
-var routes = require('./routes');
+var config = require('./config');
 
 var app = module.exports = express.createServer();
 app.configure(function () {
@@ -41,7 +40,15 @@ app.error(function (err, req, res) {
     }
 });
 
-routes(app);
+require('./controllers/sign')(app);
+app.all(/\/.*/, function (req, res, next) {
+    if (req.session.openId == null) {
+        res.redirect('/login');
+    } else {
+        next();
+    }
+});
+require('./controllers/site')(app);
 
 app.listen(config.port, function () {
 	console.log("TraceInfo server listening on port %d in %s mode", app.address().port, app.settings.env);
