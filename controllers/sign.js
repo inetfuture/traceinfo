@@ -1,11 +1,11 @@
 var dal = require('../dal');
 
-module.exports = function(app) {
-    app.get('/login', function(req, res, next) {
+module.exports = function (app) {
+    app.get('/login', function (req, res, next) {
         req.session.openId = null;
         res.render('sign/login', { title: '登录', qqCallback: req.query.qqCallback });
     });
-    app.post('/login', function(req, res, next) {
+    app.post('/login', function (req, res, next) {
         if (req.body.openId) {
             dal.checkOpenId(req.body.openId, function (err, isVerified) {
                 if (err) return next(err);
@@ -22,7 +22,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/verify', function(req, res, next) {
+    app.get('/verify', function (req, res, next) {
         if (req.session.tempOpenId) {
             res.render('sign/verify', { title: '验证', openId: req.session.tempOpenId });
             req.session.tempOpenId = null;
@@ -30,7 +30,7 @@ module.exports = function(app) {
             res.redirect('/');
         }
     });
-    app.post('/verify', function(req, res, next) {
+    app.post('/verify', function (req, res, next) {
         dal.verifyIdentity(req.body.name, req.body.idNumber, function (err, isValid) {
             if (err) return next(err);
             if (isValid) {

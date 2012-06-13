@@ -1,7 +1,7 @@
 ﻿var express = require('express');
 var config = require('./config');
 
-var app = module.exports = express.createServer();
+var app = express.createServer();
 app.configure(function () {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
@@ -51,5 +51,5 @@ app.all(/\/.*/, function (req, res, next) {
 require('./controllers/site')(app);
 
 app.listen(config.port, function () {
-	console.log("TraceInfo server listening on port %d in %s mode", app.address().port, app.settings.env);
+    console.log("TraceInfo server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
