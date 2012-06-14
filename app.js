@@ -1,9 +1,12 @@
 ﻿var express = require('express');
+var fs = require('fs');
+var mongoose = require('mongoose');
 var config = require('./config');
+var auth = require('./util/authorization');
 
 var app = express.createServer();
 app.configure(function () {
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/app/views');
     app.set('view engine', 'jade');
     app.set('view options', { layout: true });
     app.use(express.bodyParser());
@@ -19,6 +22,7 @@ app.configure('production', function () {
     app.use(express.static(__dirname + '/public', { maxAge: oneDay }));
 });
 
+// view helpers
 app.helpers({
     config: config
 });
@@ -30,25 +34,30 @@ app.dynamicHelpers({
 
 app.error(function (err, req, res) {
     console.log(err);
+    var errorMsg = 'Server Side Error';
     var accept = req.header('Accept');
     if (accept.indexOf('json') != -1) {
-        res.send('{ err: "Server Side Error" }');
+        res.send('{ err: "' + errorMsg + '" }');
     } else if (accept.indexOf('javascript') != -1) {
-        res.send('alert("Server Side Error!")');
+        res.send('alert("' + errorMsg + '")');
     } else {
-        res.send('Server Side Error!');
+        res.send(errorMsg);
     }
 });
 
-require('./controllers/sign')(app);
-app.all(/\/.*/, function (req, res, next) {
-    if (req.session.openId == null) {
-        res.redirect('/login');
-    } else {
-        next();
-    }
-});
-require('./controllers/site')(app);
+mongoose.connect(config.conString);
+
+var modelsPath = __dirname + '/app/models'
+var modelFiles = fs.readdirSync(modelsPath)
+modelFiles.forEach(function (file) {
+    require(modelsPath + '/' + file)(mongoose)
+})
+
+var controllersPath = __dirname + '/app/controllers'
+var controllerFiles = fs.readdirSync(controllersPath)
+controllerFiles.forEach(function (file) {
+    require(controllersPath + '/' + file)(app, mongoose, auth)
+})
 
 app.listen(config.port, function () {
     console.log("TraceInfo server listening on port %d in %s mode", app.address().port, app.settings.env);
