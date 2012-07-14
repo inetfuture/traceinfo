@@ -2,6 +2,7 @@
 	margin: 0; 
 	padding: 0; 
 	font-size: 14px;
+	color: black;
 }
 #wrapper { 
 	width: 960px; 
@@ -21,7 +22,7 @@
 }
 #header h1 a {
 	text-decoration: none;
-	font-size: 20px;
+	font-size: 25px;
 }
 #header .menu {
 	float: right;
@@ -29,6 +30,7 @@
 	margin-right: 20px;
 }
 #header .menu a {
+	font-size: 16px;
 	text-decoration: none;
 	padding: 10px 5px;
 }
@@ -81,4 +83,17 @@ input.focus {
 	border: 1px solid Orange;
 }
 
-
+/*
+*	信息列表样式
+*/
+#list {
+	overflow: hidden;
+}
+#list li {
+	list-style: none;
+	float: left;
+	width: 33%;
+	height: 90px;
+	padding: 5px;
+	margin: 0 0 30px;
+}	
