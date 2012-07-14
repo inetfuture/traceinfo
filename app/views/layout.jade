@@ -13,7 +13,12 @@ html
 		- each content in headContents			
 			!= content
 	body
-		#wraper
+		#wrapper
 			#header
+				h1
+					a(href="/") 08软工2班同学录
+				ol(class="menu")
+					li
+						a(href="/") 首页
 			#container!= body
 			#footer VolcanoSoft (C) 2012
